@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h1>Produits non livrés</h1>
+
+  <p>Chargez un fichier ou collez une liste/CSV.</p>
+  <p>Le résultat : tous les doublons (compte ≠ 1).</p>
+
+  <form method="post" action="{{ url_for('produits_non_livres') }}" enctype="multipart/form-data">
+    <p><input type="file" name="data_file" accept=".csv,.txt"></p>
+    <p>ou</p>
+    <p><textarea name="raw_text" rows="6" cols="60" placeholder="Collez ici une liste ou un CSV"></textarea></p>
+    <p><button type="submit">Analyser</button></p>
+  </form>
+
+{% endblock %}
