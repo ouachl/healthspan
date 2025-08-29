@@ -36,47 +36,15 @@ def summarize_items(df: pd.DataFrame, item_col: str, date_col: str, sales_col: s
     g['duration_days'] = (g['last_date'] - g['first_date']).dt.days + 1
     return g
 
-# --- 4) Compute averages ------------------------------------------------------
-def add_avg_daily_sales(summary: pd.DataFrame, duration_mode: str = 'active') -> pd.DataFrame:
-    """Add avg_daily_sales using chosen denominator ('active' or 'calendar')."""
-    out = summary.copy()
-    if duration_mode == 'active':
-        denom = out['active_days']
-    elif duration_mode == 'calendar':
-        denom = out['duration_days']
-    else:
-        raise ValueError("duration_mode must be 'active' or 'calendar'")
-    out['avg_daily_sales'] = out['total_sales'] / denom.clip(lower=1)
-    return out
-
-# --- 5) Thin wrapper ----------------------------------------------------------
-def forecast_avg_sales(
-    sales_data: pd.DataFrame,
-    item_col: str = 'item_id',
-    sales_col: str = 'quantity_sold',
-    date_col: str = 'date',
-    duration_mode: str = 'active'
-) -> pd.DataFrame:
+def productSalesStdev(sales_data: pd.DataFrame, item_col: str = 'item_id', sales_col: str = 'quantity_sold', date_col: str = 'date') -> pd.DataFrame:
     """
-    Return: [item, total_sales, duration_days, active_days, avg_daily_sales]
+    Return: [item, sales_stdev]
     """
     df = sales_data[[item_col, date_col, sales_col]]
     df = coerce_dates(df, date_col)
-    # Keep this line if your sales column might be non-numeric; otherwise remove it.
-    # df = coerce_sales_numeric(df, sales_col)
+    df = coerce_sales_numeric(df, sales_col)
 
-    summary = summarize_items(df, item_col, date_col, sales_col)
-    result  = add_avg_daily_sales(summary, duration_mode)
-    return result[[item_col, 'total_sales', 'duration_days', 'active_days', 'avg_daily_sales']]
-
-
-
-
-# Example usage:
-item_col = str("Libelle")
-sales_col = str("Qte vendue")
-date_col = str("Date")
-
-file = "/Users/laythouach/Desktop/sales_data.csv"
-sales_data_df = pd.read_csv(file)
-print(forecast_avg_sales(sales_data_df, item_col, sales_col, date_col))
+    # Compute the standard deviation of sales per item
+    stdev = df.groupby(item_col)[sales_col].std().reset_index()
+    stdev.columns = [item_col, 'sales_stdev']
+    return stdev
