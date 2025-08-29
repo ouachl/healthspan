@@ -1,9 +1,11 @@
 import pandas as pd
 
+# Load a CSV file into a DataFrame
 def load_csv():
     path = input("Enter the CSV file path: ")
     return pd.read_csv(path, delimiter=';')
 
+# Map the headers of the uploaded data to the desired format
 def map_headers(uploaded_data):
     options = {
         "1": "ProductID",
@@ -25,6 +27,8 @@ def map_headers(uploaded_data):
             options.pop(choice)      
     return mapping
 
+
+# Format the DataFrame according to the mapping
 def format_dataframe(df, mapping):
     kept = [c for c in df.columns if c in mapping]
     out = df.loc[:, kept].rename(columns=mapping)
