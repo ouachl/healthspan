@@ -1,4 +1,6 @@
 import pandas as pd
+from typing import Dict, Iterable
+
 
 # Load a CSV file into a DataFrame
 def load_csv():

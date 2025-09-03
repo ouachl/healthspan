@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, flash, render_template, request, session
 import pandas as pd
+from prompting import format_dataframe, map_headers
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -18,7 +19,7 @@ def produits_non_livres():
     if request.method == "POST":
         file = request.files.get("data_file")
         if file and file.filename:
-            df = pd.read_csv(file, sep=";")
+            df = pd.read_csv(file)
             table_html = table_html = df.to_html(index=False, classes="table table-striped table-bordered")
     return render_template("produits_non_livres.html", table_html=table_html)
 
