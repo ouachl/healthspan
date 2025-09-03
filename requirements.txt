@@ -1,2 +1,4 @@
-Flask
-gunicorn
+Flask>=3.0
+gunicorn>=21.2
+pandas>=2.2
+numpy>=2.0
